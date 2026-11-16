@@ -1,0 +1,16 @@
+{
+  "name": "ConectaBairro PWA",
+  "short_name": "ConectaBairro",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1b5e20",
+  "description": "Conexão direta com trabalhadores autônomos e serviços da sua comunidade.",
+  "icons": [
+    {
+      "src": "/static/icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
