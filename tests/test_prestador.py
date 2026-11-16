@@ -25,6 +25,17 @@ def test_cadastrar_prestador_sucesso():
     assert "id" in data
 
 
+def test_cadastrar_prestador_nome_invalido():
+    payload = {
+        "nome": "João <script>alert(1)</script>",
+        "telefone": "11988887777",
+        "categoria_id": 1,
+        "descricao": "Instalações elétricas com segurança e garantia."
+    }
+    response = client.post("/api/prestadores", json=payload)
+    assert response.status_code == 422
+
+
 def test_cadastrar_prestador_telefone_invalido():
     payload = {
         "nome": "João Sem Telefone",
@@ -33,7 +44,7 @@ def test_cadastrar_prestador_telefone_invalido():
         "descricao": "Trabalhos de pintura de paredes e tetos residenciais."
     }
     response = client.post("/api/prestadores", json=payload)
-    assert response.status_code == 422  # Unprocessable Entity (Pydantic validation)
+    assert response.status_code == 422
 
 
 def test_cadastrar_prestador_descricao_curta():
@@ -65,3 +76,9 @@ def test_obter_prestador_por_id():
     data = response.json()
     assert data["id"] == 1
     assert "nome" in data
+
+
+def test_obter_prestador_inexistente():
+    response = client.get("/api/prestadores/99999")
+    assert response.status_code == 404
+    assert "não encontrado" in response.json()["detail"]

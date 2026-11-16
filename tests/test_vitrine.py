@@ -5,19 +5,6 @@ Testes automatizados para a Tela 1: Vitrine Comunitária e Filtros (RF01).
 import pytest
 from fastapi.testclient import TestClient
 from app.main import app
-from app.database import Base, engine, SessionLocal
-from app.crud import seed_initial_data
-
-
-@pytest.fixture(scope="module", autouse=True)
-def setup_database():
-    Base.metadata.create_all(bind=engine)
-    db = SessionLocal()
-    seed_initial_data(db)
-    db.close()
-    yield
-    # Limpeza se necessário
-
 
 client = TestClient(app)
 
@@ -26,6 +13,11 @@ def test_healthcheck():
     response = client.get("/health")
     assert response.status_code == 200
     assert response.json()["status"] == "healthy"
+
+
+def test_root_pwa():
+    response = client.get("/")
+    assert response.status_code == 200
 
 
 def test_listar_categorias_vitrine():
