@@ -1,6 +1,7 @@
 // ConectaBairro PWA - Frontend Controller
 let categorias = [];
 let categoriaSelecionadaId = null;
+let ultimoTelefonePrestador = '';
 
 // Registro do Service Worker para funcionalidade offline (PWA)
 if ('serviceWorker' in navigator) {
@@ -171,8 +172,51 @@ async function abrirConfirmacaoConexao(prestadorId, nome, categoria) {
     btnWhatsapp.href = data.whatsapp_url;
     btnWhatsapp.target = '_blank';
     btnWhatsapp.style.display = 'inline-flex';
+
+    // Armazena o telefone para fallback via clipboard
+    const matchTel = data.whatsapp_url.match(/wa\.me\/55(\d+)/);
+    ultimoTelefonePrestador = matchTel ? matchTel[1] : '';
+    const fb = document.getElementById('copiar-feedback');
+    if (fb) fb.textContent = '';
   } catch (err) {
     details.innerHTML = '<p>Falha ao gerar link do WhatsApp. Tente novamente.</p>';
+  }
+}
+
+// Aprimoramento Feedback: Cópia resiliente do telefone para a área de transferência
+function copiarTelefonePrestador() {
+  const fb = document.getElementById('copiar-feedback');
+  if (!ultimoTelefonePrestador) {
+    if (fb) {
+      fb.textContent = 'Número não disponível no momento.';
+      fb.style.color = '#c62828';
+    }
+    return;
+  }
+
+  // Formata o telefone para exibição amigável
+  const ddd = ultimoTelefonePrestador.substring(0, 2);
+  const parte1 = ultimoTelefonePrestador.length === 11 ? ultimoTelefonePrestador.substring(2, 7) : ultimoTelefonePrestador.substring(2, 6);
+  const parte2 = ultimoTelefonePrestador.length === 11 ? ultimoTelefonePrestador.substring(7) : ultimoTelefonePrestador.substring(6);
+  const telFormatado = `(${ddd}) ${parte1}-${parte2}`;
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(telFormatado).then(() => {
+      if (fb) {
+        fb.textContent = `✔ Número ${telFormatado} copiado com sucesso!`;
+        fb.style.color = '#1b5e20';
+      }
+    }).catch(() => {
+      if (fb) {
+        fb.textContent = `Telefone: ${telFormatado}`;
+        fb.style.color = '#1a1a1a';
+      }
+    });
+  } else {
+    if (fb) {
+      fb.textContent = `Telefone: ${telFormatado}`;
+      fb.style.color = '#1a1a1a';
+    }
   }
 }
 

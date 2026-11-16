@@ -112,13 +112,15 @@ header p {
   margin-top: 10px;
 }
 
-/* Filtros por Categoria - Rolagem Horizontal */
+/* Filtros por Categoria - Rolagem Horizontal com Scroll-Snap e Affordance */
 .categories-nav {
   margin-bottom: 20px;
   overflow-x: auto;
   white-space: nowrap;
   padding-bottom: 8px;
   -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
 }
 
 .category-chip {
@@ -133,6 +135,7 @@ header p {
   font-weight: 600;
   cursor: pointer;
   text-align: center;
+  scroll-snap-align: start;
 }
 
 .category-chip.active {
